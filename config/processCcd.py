@@ -5,7 +5,7 @@ from __future__ import absolute_import, division, print_function
 import os.path
 
 from lsst.utils import getPackageDir
-from lsst.meas.algorithms import LoadIndexedReferenceObjectsTask
+from lsst.meas.algorithms import LoadPanstarrsObjectsTask
 from lsst.meas.algorithms import ColorLimit
 
 configDir = os.path.join(getPackageDir("obs_subaru"), "config")
@@ -37,7 +37,7 @@ for refObjLoader in (config.calibrate.astromRefObjLoader,
                      config.calibrate.photoRefObjLoader,
                      config.charImage.refObjLoader,
                      ):
-    refObjLoader.retarget(LoadIndexedReferenceObjectsTask)
+    refObjLoader.retarget(LoadPanstarrsObjectsTask)
     refObjLoader.load(os.path.join(getPackageDir("obs_subaru"), "config", "filterMap.py"))
     refObjLoader.ref_dataset_name = "ps1_pv3_3pi_20170110"
 
