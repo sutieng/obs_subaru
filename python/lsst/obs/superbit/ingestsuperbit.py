@@ -54,12 +54,14 @@ class SuperBITParseTask(ParseTask):
             field = "UNKNOWN"
         # replacing inappropriate characters for file path and upper()
         field = re.sub(r'\W', '_', field).upper()
+#return field
+        field="TEST"
         return field
 
     def translate_visit(self, md):
-        expId = md.get("FRAMEID").strip()
-        m = re.search("(\d{6})", expId)  ###EXP-ID: 6numbers, can be changed, depend on how they set
-        return int(m.group(1))
+        expId = md.get("FRAMEID")
+        #m = re.search("(\d{6})", expId)  ###EXP-ID: 6numbers, can be changed, depend on how they set
+        return expId
 
     def getTjd(self, md):
         """Return truncated (modified) Julian Date"""
@@ -79,7 +81,7 @@ class SuperBITParseTask(ParseTask):
             pass
     
         try:
-            dateobs = md.get("DATE-OBS")
+            dateobs = md.get("DATE_OBS")
             m = re.search(r'(\d{4})-(\d{2})-(\d{2})', dateobs)
             year, month, day = m.groups()
             obsday = datetime.datetime(int(year), int(month), int(day), 0, 0, 0)
@@ -98,8 +100,8 @@ class SuperBITParseTask(ParseTask):
     def translate_filter(self, md):
         """Want upper-case filter names"""
         try:
-            return "WHEELPOS"+str(md.get('WHEELPOS'))
-        #return md.get('FILTER01').strip().upper()
+            #return "WHEELPOS"+str(md.get('WHEELPOS'))
+            return md.get('FILTER').strip().upper()
         except:
             return "Unrecognized"
 
@@ -121,10 +123,11 @@ CALIB_ID= 'filter=NONE calibDate=2013-11-03 ccd=0'''
     
     def translate_filter(self, md):
     #return self._translateFromCalibId("filter", md)
-        return "WHEELPOS"+str(md.get('WHEELPOS'))
+        #return "WHEELPOS"+str(md.get('WHEELPOS'))
+        return md.get('FILTER').strip().upper()
 
     def translate_calibDate(self, md):
-        return md.get("DATE-OBS")
+        return md.get("DATE_OBS")
     
 
 ###data structure: "OBJECT"->"DATE-OBS"->translate_pointing("DATE-OBS")->"FILTER01"->HSC-"FRAMEID"-"ccd".fits
