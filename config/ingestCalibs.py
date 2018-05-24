@@ -1,5 +1,5 @@
-from lsst.obs.subaru.ingest import HscCalibsParseTask
-config.parse.retarget(HscCalibsParseTask)
+from lsst.obs.superBIT.ingestsuperbit import SuperBITCalibsParseTask
+config.parse.retarget(SuperBITCalibsParseTask)
 
 config.register.columns = {'filter': 'text',
                            'ccd': 'int',

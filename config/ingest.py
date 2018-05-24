@@ -2,7 +2,7 @@ from lsst.obs.superBIT.ingestsuperbit import SuperBITParseTask
 config.parse.retarget(SuperBITParseTask)
 
 config.parse.translation = {#'proposal': 'PROP-ID',
-                            'dataType': 'DATA-TYP',
+                            'dataType': 'DATA-TYPE',
                             'expTime': 'EXPTIME',
                             #'pa': 'INST-PA',
                             #'autoguider': 'T_AG',
@@ -10,8 +10,8 @@ config.parse.translation = {#'proposal': 'PROP-ID',
                             #'config': 'T_CFGFIL',
                             'frameId': 'FRAMEID',
                             #'expId': 'EXP-ID',
-                            'dateObs': 'DATE-OBS',
-                            'taiObs': 'DATE-OBS',
+                            'dateObs': 'DATE_OBS',
+                            'taiObs': 'DATE_OBS',
                             }
 config.parse.defaults = {'ccdTemp': "0", # Added in commissioning run 3
                          }
