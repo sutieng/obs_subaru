@@ -78,7 +78,7 @@ class SuperBITMapper(CameraMapper):
                                    alias=["NONE", "None", "Unrecognised", "UNRECOGNISED",
                                           "Unrecognized", "UNRECOGNIZED", "NOTSET", ])
         afwImageUtils.defineFilter(name='g', lambdaEff=477, alias=['W-S-G+', 'HSC-G'])
-        afwImageUtils.defineFilter(name='r', lambdaEff=623, alias=['W-S-R+', 'HSC-R'])
+        afwImageUtils.defineFilter(name='r', lambdaEff=623, alias=['W-S-R+', 'HSC-R','OPEN'])
         afwImageUtils.defineFilter(name='r1', lambdaEff=623, alias=['109', 'ENG-R1'])
         afwImageUtils.defineFilter(name='i', lambdaEff=775, alias=['W-S-I+', 'HSC-I'])
         afwImageUtils.defineFilter(name='z', lambdaEff=925, alias=['W-S-Z+', 'HSC-Z'])
@@ -107,6 +107,7 @@ class SuperBITMapper(CameraMapper):
         #
         self.filters = {}
         for f in [
+	    'OPEN',
             "HSC-G",
             "HSC-R",
             "HSC-R2",
@@ -196,9 +197,10 @@ Most chips are flipped L/R, but the rotated ones (100..103) are flipped T/B
         if exp:
             exp.setMaskedImage(afwMath.flipImage(exp.getMaskedImage(), flipLR, flipTB))
         if wcs:
-            wcs.flipImage(flipLR, flipTB, exp.getDimensions() if dims is None else dims)
-
-        return exp
+            ampDimensions = exp.getDimensions() if dims is None else dims
+            ampCenter = afwGeom.Point2D(ampDimensions/2.0)
+            wcs = afwGeom.makeFlippedWcs(wcs, flipLR, flipTB, ampCenter)
+        return exp,wcs 
 
     def std_raw_md(self, md, dataId):
         if False:            # no std_raw_md in baseclass
@@ -206,9 +208,12 @@ Most chips are flipped L/R, but the rotated ones (100..103) are flipped T/B
         #
         # We need to flip the WCS defined by the metadata in case anyone ever constructs a Wcs from it
         #
-        wcs = afwImage.makeWcs(md)
-        self._flipChipsLR(None, wcs, dataId, dims=afwGeom.ExtentI(md.get("NAXIS1"), md.get("NAXIS2")))
-        wcsR = afwImage.Wcs(wcs.getSkyOrigin().getPosition(), wcs.getPixelOrigin(), wcs.getCDMatrix()*0.992)
+        wcs = afwGeom.makeSkyWcs(md)
+        wcs = self._flipChipsLR(None, wcs, dataId, dims=afwImage.bboxFromMetadata(md).getDimensions())[1]
+        wcsR = afwGeom.makeSkyWcs(crpix=wcs.getPixelOrigin(),
+                                  crval=wcs.getSkyOrigin(),
+                                  cdMatrix=wcs.getCdMatrix()*0.992)
+
         wcsMd = wcsR.getFitsMetadata()
 
         for k in wcsMd.names():
