@@ -23,10 +23,21 @@ how to use this package?
 
 4. Create a DATA directory
 
- 	mkdir TESTDATA
+ 	mkdir superbit_repo
   
- 	echo "lsst.obs.superBIT.SuperBITMapper" >  TESTDATA/_mapper
+ 	echo "lsst.obs.superBIT.SuperBITMapper" >  superbit_repo/_mapper
 
 5. Ingest the raw images into the data repository
 
- 	python ./bin/superbitIngestImages.py TESTDATA/ RAWDATAFILE/raw/*.fits (image in obs_superBIT/superbit_repo/TESTIMAGE1/2017-05-25/WHEELPOS0/) yo, this is not general
+ 	superbitIngestImages.py superbit_repo/  tests/data/image_ifc_1526928542_72732.fits
+
+6. Ingest Dark/Bias/Flat image into data repository
+	
+	ingestCalibs.py superbit_repo/ --calib superbit_repo/CALIB 'tests/data/BIAS-2018-05-21.fits' --validity 99
+	ingestCalibs.py superbit_repo/ --calib superbit_repo/CALIB 'tests/data/DARK-2018-05-21.fits' --validity 99
+	ingestCalibs.py superbit_repo/ --calib superbit_repo/CALIB 'tests/data/FLAT*.fits' --validity 99
+
+7. invoke the analysis program that processes CCD.
+
+	processCcd.py superbit_repo/  --id visit=72737 ccd=1 --output outputrepo --calib superbit_repo/CALIB --clobber-config  --no-versions
+
