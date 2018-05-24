@@ -1,38 +1,13 @@
 """
-HSC-specific overrides for ProcessCcdTask
+SuperBIT-specific overrides for ProcessCcdTask
 (applied after Subaru overrides in ../processCcd.py).
 """
 import os.path
 
 from lsst.utils import getPackageDir
-from lsst.obs.subaru.isr import SubaruIsrTask
+from lsst.obs.superBIT.isr import SuperBITIsrTask
 
-hscConfigDir = os.path.join(getPackageDir("obs_subaru"), "config", "hsc")
-config.isr.retarget(SubaruIsrTask)
-config.isr.load(os.path.join(hscConfigDir, 'isr.py'))
-config.calibrate.photoCal.colorterms.load(os.path.join(hscConfigDir, 'colorterms.py'))
-config.charImage.measurePsf.starSelector["objectSize"].widthMin = 0.9
-config.charImage.measurePsf.starSelector["objectSize"].fluxMin = 4000
-for refObjLoader in (config.calibrate.astromRefObjLoader,
-                     config.calibrate.photoRefObjLoader,
-                     config.charImage.refObjLoader,
-                     ):
-    refObjLoader.load(os.path.join(hscConfigDir, "filterMap.py"))
+superbitConfigDir = os.path.join(getPackageDir("obs_subaru"), "config", "SuperBIT")
+config.isr.retarget(SuperBITIsrTask)
+config.isr.load(os.path.join(superbitConfigDir, 'isr_superbit.py'))
 
-# Set to match defaults curretnly used in HSC production runs (e.g. S15B)
-config.calibrate.astrometry.wcsFitter.numRejIter = 3
-config.calibrate.astrometry.wcsFitter.order = 3
-for matcher in (config.charImage.ref_match.matcher,
-                config.calibrate.astrometry.matcher,
-                ):
-    matcher.sourceSelector.active.sourceFluxType = 'Psf'
-    matcher.allowedNonperpDeg = 0.2
-    matcher.maxRotationDeg = 1.145916
-    matcher.maxMatchDistArcSec = 2.0
-    matcher.maxOffsetPix = 250
-
-# Do not use NO_DATA pixels for fringe subtraction.
-config.isr.fringe.stats.badMaskPlanes = ['SAT', 'NO_DATA']
-
-config.charImage.measurement.plugins["base_Jacobian"].pixelScale = 0.168
-config.calibrate.measurement.plugins["base_Jacobian"].pixelScale = 0.168
