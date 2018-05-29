@@ -43,35 +43,36 @@ class MakeHscRawVisitInfo(MakeRawVisitInfo):
         @param[in,out] argdict  a dict of arguments
         """
         MakeRawVisitInfo.setArgDict(self, md, argDict)
-        argDict["boresightRaDec"] = SpherePoint(
-            self.popAngle(md, "RA2000", units=astropy.units.h),
-            self.popAngle(md, "DEC2000"),
-        )
-        altitude = self.popAngle(md, "ALTITUDE")
-        if altitude > 90*degrees:  # Sometimes during day observations, when not tracking
-            if self.log is not None:
-                self.log.warn("Clipping altitude (%f) at 90 degrees", altitude)
-            altitude = 90*degrees
-        argDict["boresightAzAlt"] = SpherePoint(
-            self.popAngle(md, "AZIMUTH"),
-            altitude,
-        )
-        argDict["boresightAirmass"] = self.popFloat(md, "AIRMASS")
-        argDict["observatory"] = self.observatory
-        argDict["weather"] = Weather(
-            self.centigradeFromKelvin(self.popFloat(md, "OUT-TMP")),
-            self.pascalFromMmHg(self.popFloat(md, "OUT-PRS")),
-            self.popFloat(md, "OUT-HUM"),
-        )
-        LST = self.popAngle(md, "LST-STR", units=astropy.units.h)
-        argDict['era'] = self.eraFromLstAndLongitude(LST, self.observatory.getLongitude())
+            #argDict["boresightRaDec"] = SpherePoint(
+            #self.popAngle(md, "RA", units=astropy.units.h),
+            #self.popAngle(md, "DEC"),
+            #)
+            #altitude = self.popAngle(md, "ALTITUDE")
+            #altitude = self.popAngle(md, "EL")
+        #if altitude > 90*degrees:  # Sometimes during day observations, when not tracking
+         #   if self.log is not None:
+         #       self.log.warn("Clipping altitude (%f) at 90 degrees", altitude)
+          #  altitude = 90*degrees
+          #argDict["boresightAzAlt"] = SpherePoint(
+          # self.popAngle(md, "AZ"),
+          #  altitude,
+          #  )
+        #argDict["boresightAirmass"] = self.popFloat(md, "AIRMASS")
+        #argDict["observatory"] = self.observatory
+        #argDict["weather"] = Weather(
+        #    self.centigradeFromKelvin(self.popFloat(md, "OUT-TMP")),
+        #    self.pascalFromMmHg(self.popFloat(md, "OUT-PRS")),
+        #    self.popFloat(md, "OUT-HUM"),
+        #)
+        #LST = self.popAngle(md, "LST-STR", units=astropy.units.h)
+        #argDict['era'] = self.eraFromLstAndLongitude(LST, self.observatory.getLongitude())
         argDict['darkTime'] = argDict['exposureTime']
 
         # Rotation angle formula determined empirically from visual inspection
         # of HSC images.  See DM-9111.
-        rotAngle = (270.0*degrees - self.popAngle(md, "INST-PA")).wrap()
-        argDict['boresightRotAngle'] = rotAngle
-        argDict['rotType'] = RotType.SKY
+        #rotAngle = (270.0*degrees - self.popAngle(md, "INST-PA")).wrap()
+        #argDict['boresightRotAngle'] = rotAngle
+        #argDict['rotType'] = RotType.SKY
 
     def getDateAvg(self, md, exposureTime):
         """Return date at the middle of the exposure

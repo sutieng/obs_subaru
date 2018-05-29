@@ -37,7 +37,7 @@ import lsst.afw.image as afwImage
 import lsst.afw.geom as afwGeom
 import lsst.afw.math as afwMath
 from lsst.afw.display.rgb import makeRGB
-from lsst.obs.subaru.crosstalkYagi import YagiCrosstalkTask
+#from lsst.obs.subaru.crosstalkYagi import YagiCrosstalkTask
 import lsst.afw.display.ds9 as ds9
 from lsst.obs.hsc.vignette import VignetteConfig
 from lsst.afw.geom.polygon import Polygon
@@ -206,8 +206,9 @@ class SuperBITIsrTask(IsrTask):
 
     def runDataRef(self, sensorRef):
         self.log.info("Performing ISR on sensor %s" % (sensorRef.dataId))
-        ccdExposure = sensorRef.get('raw')
-
+        print("Performing ISR on sensor %s" % (sensorRef.dataId)) ###add
+        ccdExposure = sensorRef.get('raw')[0] ###add
+        print(ccdExposure)
         if self.config.removePcCards: # Remove any PC00N00M cards in the header
             raw_md = sensorRef.get("raw_md")
             nPc = 0
@@ -222,12 +223,14 @@ class SuperBITIsrTask(IsrTask):
             if nPc:
                 self.log.info("Recreating Wcs after stripping PC00n00m" % (sensorRef.dataId))
                 ccdExposure.setWcs(afwImage.makeWcs(raw_md))
-
+        
         ccdExposure = self.convertIntToFloat(ccdExposure)
         ccd = ccdExposure.getDetector()
+        
 
         # Read in defects to check for any dead amplifiers (entire amp is within defect region)
-        defects = sensorRef.get("defects", immediate=True)
+        #defects = sensorRef.get("defects", immediate=True) ##org
+        defects=[] ##add
 
         for amp in ccd:
             # Check if entire amp region is defined as defect (need to use amp.getBBox() for correct

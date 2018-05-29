@@ -10,7 +10,7 @@ from lsst.meas.algorithms import ColorLimit
 
 configDir = os.path.join(getPackageDir("obs_subaru"), "config")
 bgFile = os.path.join(configDir, "background.py")
-
+'''
 # Cosmic rays and background estimation
 config.charImage.repair.cosmicray.nCrPixelMax = 1000000
 config.charImage.repair.cosmicray.cond3_fac2 = 0.4
@@ -95,3 +95,5 @@ config.calibrate.measurement.plugins.names |= ["base_Jacobian", "base_FPPosition
 if "ext_convolved_ConvolvedFlux" in config.charImage.measurement.plugins:
     names = config.charImage.measurement.plugins["ext_convolved_ConvolvedFlux"].getAllResultNames()
     config.charImage.measureApCorr.allowFailure += names
+
+'''
